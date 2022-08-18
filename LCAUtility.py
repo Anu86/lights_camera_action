@@ -44,7 +44,7 @@ def show_pdf(file_path):
 
 # Load the data into a Pandas DataFrame
 df_movie_data = pd.read_csv(
-    Path("Movies_to_fund.csv"), index_col = 'Name')
+    Path("Movie-Projects.csv"), index_col = 'Name')
 
 ## Set up the title in black
 st.markdown(f'<h1 style="color:#f7d0cb;font-size:40px;">{"Lights Camera Action"}</h1>', unsafe_allow_html=True)
@@ -57,6 +57,11 @@ st.image(image_1, width=400)
 
 st.markdown(f'<p style="color:#c5b9cd;font-size:20px;">{"Bach Gaye Re Obama (BGRO) is a sequel to the hit film Phas Gaye Re Obama (PGRO). BGRO is a fast paced, fun-filled , hilarious gangster based satirical comedy, larger in scale and scope than its prequel. The story deals with the problems faced by a maid who is ‘used’ by the powerful diplomats abroad and how her challenging their might shakes the corridors of power both in India and the US."}</p>', unsafe_allow_html=True)
 
+
+## Table with artist details for Movie-1
+st.table(df_movie_data.iloc[0])
+                  
+## More details - Display PDF                  
 if st.button('Get Details on Movie-1 >>'):
     show_pdf('film_projects/bgro/synopsis.pdf')
 
@@ -65,6 +70,10 @@ image_2 = Image.open('film_projects/pgro/pgro.png')
 st.image(image_2, width=400)
 
 st.markdown(f'<p style="color:#c5b9cd;font-size:20px;">{"The movie is a comedy with satire on recession. The story revolves around a Non-resident- Indian (NRI), Om Shashtri, who lived the American dream and made it big in the US. Then one day, as it happened in America, US economy went into recession and overnight big businesses, banks, and financial institutions crashed."}</p>', unsafe_allow_html=True)
+
+
+## Table with artist details for Movie-2
+st.table(df_movie_data.iloc[1])
 
 if st.button('Get Details on Movie-2 >>'):
    show_pdf('film_projects/pgro/synopsis.pdf')
@@ -75,21 +84,14 @@ st.image(image_3, width=400)
 
 st.markdown(f'<p style="color:#c5b9cd;font-size:20px;">{"The story is a hilarious and satirical take on Mehngai( (inflation) through a middle class family from a small North Indian City. The family, crushed under the burden of Mehngai. tries to deal with it through an ingenious idea, not realizing the problems they would get tangled into as a result of this idea. It is a hillarious journey of this family battling these issues culminating into a climax that brings tears into your eyes."}</p>', unsafe_allow_html=True)
 
+## Table with artist details for Movie-3
+st.table(df_movie_data.iloc[2])
+
 if st.button('Get Details on Movie-3 >>'):
  show_pdf('film_projects/sjsm/synopsis.pdf')
 
 
     
-    
-
-
-    
-##show table
-
-## 
-    
-
-## display the projects as tiles 
-
+  
 
         
