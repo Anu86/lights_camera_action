@@ -32,13 +32,13 @@ def set_png_as_page_bg(png_file):
     return
 
 ## SEt up Background Image 
-set_png_as_page_bg('image_2.png')
+set_png_as_page_bg('film_3.png')
 
 ##Function to display PDF
 def show_pdf(file_path):
     with open(file_path,"rb") as f:
         base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="800" height="800" type="application/pdf"></iframe>'
+    pdf_display = f'<iframe src="data:application/pdf;base64,{base64_pdf}" width="600" height="600" type="application/pdf"></iframe>'
     st.markdown(pdf_display, unsafe_allow_html=True)
 
 
@@ -58,7 +58,7 @@ st.image(image_1, width=400)
 st.markdown(f'<p style="color:#c5b9cd;font-size:20px;">{"Bach Gaye Re Obama (BGRO) is a sequel to the hit film Phas Gaye Re Obama (PGRO). BGRO is a fast paced, fun-filled , hilarious gangster based satirical comedy, larger in scale and scope than its prequel. The story deals with the problems faced by a maid who is ‘used’ by the powerful diplomats abroad and how her challenging their might shakes the corridors of power both in India and the US."}</p>', unsafe_allow_html=True)
 
 ## Table with artist details for Movie-1
-st.table(df_movie_data.iloc[0])
+st.table(df_movie_data.iloc[0], textColor='#262730')
                   
 ## More details - Display PDF                  
 if st.button('Get Details on Movie-1 >>'):
