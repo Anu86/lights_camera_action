@@ -1,24 +1,25 @@
-pragma solidity ^0.5.0;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.5.5;
 
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/release-v2.5.0/contracts/token/ERC721/ERC721Full.sol";
 
-contract ArtRegistry is ERC721Full {
-    constructor() public ERC721Full("ArtRegistryToken", "ART") {}
+contract FilmRegistry is ERC721Full {
+    constructor() public ERC721Full("FilmRegistryToken", "FILM") {}
 
-    struct Artwork {
+    struct filmWork {
         string name;
-        string artist;
+        string title;
         uint256 appraisalValue;
     }
 
-    mapping(uint256 => Artwork) public artCollection;
+    mapping(uint256 => filmWork) public filmCollection;
 
     event Appraisal(uint256 tokenId, uint256 appraisalValue, string reportURI);
 
-    function registerArtwork(
+    function registerFilmwork(
         address owner,
         string memory name,
-        string memory artist,
+        string memory title,
         uint256 initialAppraisalValue,
         string memory tokenURI
     ) public returns (uint256) {
@@ -27,7 +28,7 @@ contract ArtRegistry is ERC721Full {
         _mint(owner, tokenId);
         _setTokenURI(tokenId, tokenURI);
 
-        artCollection[tokenId] = Artwork(name, artist, initialAppraisalValue);
+        filmCollection[tokenId] = filmWork(name, title, initialAppraisalValue);
 
         return tokenId;
     }
@@ -37,10 +38,10 @@ contract ArtRegistry is ERC721Full {
         uint256 newAppraisalValue,
         string memory reportURI
     ) public returns (uint256) {
-        artCollection[tokenId].appraisalValue = newAppraisalValue;
+        filmCollection[tokenId].appraisalValue = newAppraisalValue;
 
         emit Appraisal(tokenId, newAppraisalValue, reportURI);
 
-        return artCollection[tokenId].appraisalValue;
+        return filmCollection[tokenId].appraisalValue;
     }
 }
