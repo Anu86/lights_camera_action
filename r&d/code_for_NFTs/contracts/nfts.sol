@@ -1,4 +1,4 @@
-/ SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts@4.7.3/token/ERC1155/ERC1155.sol";
@@ -96,3 +96,4 @@ contract NFTs is ERC1155, AccessControl, Pausable, ERC1155Supply {
 
         return tokenId;
     }
+}
