@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+/ SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts@4.7.3/token/ERC1155/ERC1155.sol";
@@ -24,7 +24,9 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
         uint256 value;  //price for this one
         uint256 amount; //how many of this nft
         string uri;  //uri of the. token
-        string file_hash;
+        string file_hash; // for Streamlit Ease
+        uint256 tokenid; //for Streamlit ease
+        uint256 availableNow; // howmany available now
 
     }
 
@@ -124,8 +126,10 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
 
          _mint(owner, tokenId, howMany, data);
          //_setURI(nftURI);
-
-        tokenCollection[tokenId] = tokenInfo(owner, initialPrice, howMany, nftURI, file_hash);
+        // added file_has for ease of display in Streamlit-IPFS, 
+        // added tokenId on RHS, though not needed here, but eases work from Streamlit for updating
+        // count of tokens/tokenId
+        tokenCollection[tokenId] = tokenInfo(owner, initialPrice, howMany, nftURI, file_hash, tokenId, howMany);
         tokenBalance[tokenId] = howMany; //initialize the totalcount of this token
         _uris[tokenId] = nftURI;  // uri of the token  mapped to tokenID
         _idOfUris[nftURI] = tokenId;  // tokenId mapped to Uri
@@ -156,6 +160,7 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
         // Here we assume that there was enough to sell, so balance will NOT be negative
 
         tokenBalance[Id] -= count;
+        tokenCollection[Id].availableNow = tokenBalance[Id];
 
     }
 // number of types of tokens available for sale. For each token there is ONE item in case of a NFT

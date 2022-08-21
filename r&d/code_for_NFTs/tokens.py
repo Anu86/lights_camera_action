@@ -139,8 +139,6 @@ if tokensAvailable > 0:
         st.write("Your order will be executed upon the closing date of this campaign")
         name = st.text_input("Your Name Please")
         addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
-       
-
         if  st.button("Confirm to Purchase"):
             contract.functions.updateBuyersList (
                 addr,   # buyer addr
@@ -148,11 +146,10 @@ if tokensAvailable > 0:
                 tokenId,  #token id
                 amt,  # how many he wants
                 tokenPrice  # price paid. at present, taking the same price as offered
-            ).transact({'from': address, 'gas': 1000000})
+            ).transact({'from': addr, 'gas': 1000000})
+            contract.functions.updateTokenCount(int(tokenId), int(amt)).call()
 
-            contract.functions.updateTokenCount(tokenId, amt).call()
-        
-
+    
 
 
 
