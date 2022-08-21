@@ -1,5 +1,6 @@
 import os
 import json
+import token
 from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load the contract ABI
-    with open(Path('./contracts/compiled/nfts_abi.json')) as f:
+    with open(Path('./contracts/compiled/tokens_abi.json')) as f:
         contract_abi = json.load(f)
 
     # Set the contract address (this is the address of the deployed contract)
@@ -76,7 +77,7 @@ st.markdown("---")
 st.markdown("## Register NFT Item")
 item_from = st.text_input("Enter the name of the Movie/ Web-Series")
 item_name = st.text_input("Enter the name for the Item from this Movie/Series")
-initial_appraisal_value = st.text_input("Enter the Initial Price")
+initial_price = st.text_input("Enter the Initial Price")
 amount = st.text_input("How many NFT Tokens for this item")  #amt is uint256
 artwork_file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
 data = 0x0000  #data is bytes data, if any
@@ -88,11 +89,12 @@ if st.button("Register with IPFS"):
 
     artwork_uri = f"ipfs://{artwork_ipfs_hash}"
 
-    tx_hash = contract.functions.registerNFT(
+    tx_hash = contract.functions.registerToken(
         address,
-        int(initial_appraisal_value),
+        int(initial_price),
         int(amount),
         artwork_uri,
+        file_hash,
         bytes(0x0000)
     ).transact({'from': address, 'gas': 1000000})
     receipt = w3.eth.waitForTransactionReceipt(tx_hash)
@@ -101,6 +103,61 @@ if st.button("Register with IPFS"):
    # st.write("You can view the pinned metadata file with the following IPFS Gateway Link")
     #st.markdown(f"[Artwork IPFS Gateway Link](https://ipfs.io/ipfs/{artwork_ipfs_hash})")
     st.markdown(f"[Click to see the NFT just added](https://gateway.pinata.cloud/ipfs/{file_hash})")
-
+    st.write(file_hash)
 st.markdown("---")
+
+# DISPLAY AVAILABLE TOKENS
+tokensAvailable = contract.functions.numberOfTokens().call()
+
+st.write("Number of tokens available-> "+ str(tokensAvailable))
+
+if tokensAvailable > 0:
+    tokenList = []
+    for item in range (1,tokensAvailable+1):
+        tokenData = contract.functions.tokenCollection(item).call()
+        tokenList.append(tokenData)
+    tokenSelected=st.sidebar.selectbox("Select Option", tokenList)
+    availableNow = tokenSelected[6]
+
+    if tokenSelected and int(availableNow) > 0:
+        st.write("Selected Token Data")
+
+        tokenPrice=tokenSelected[1]
+        maxTokens = tokenSelected[2]
+        tokenId = tokenSelected[5]
+        tokenOwner=tokenSelected[0]
+
+        st.write(tokenSelected[3], tokenSelected[2], tokenSelected[1], tokenSelected[0])
+        st.write("token Id=>", tokenId)
+        st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
+
+    #display tokens and their prices etc
+
+        st.write("Price of this Token is; ", tokenPrice)
+        st.write("Maximum count available for this item: ", availableNow)
+        amt= st.number_input("How many do you want", min_value=1, max_value=int(availableNow))
+        st.write("Your order will be executed upon the closing date of this campaign")
+        name = st.text_input("Your Name Please")
+        addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
+       
+
+        if  st.button("Confirm to Purchase"):
+            contract.functions.updateBuyersList (
+                addr,   # buyer addr
+                name,   # name
+                tokenId,  #token id
+                amt,  # how many he wants
+                tokenPrice  # price paid. at present, taking the same price as offered
+            ).transact({'from': address, 'gas': 1000000})
+
+            contract.functions.updateTokenCount(tokenId, amt).call()
+        
+
+
+
+
+
+
+# Now setting a sidebar menu
+
 

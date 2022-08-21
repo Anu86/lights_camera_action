@@ -1,6 +1,12 @@
 [
     {
-        "inputs": [],
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "exchangeRate",
+                "type": "uint256"
+            }
+        ],
         "stateMutability": "nonpayable",
         "type": "constructor"
     },
@@ -104,26 +110,6 @@
         "type": "function"
     },
     {
-        "inputs": [],
-        "name": "pause",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "Paused",
-        "type": "event"
-    },
-    {
         "inputs": [
             {
                 "internalType": "address",
@@ -132,12 +118,12 @@
             },
             {
                 "internalType": "uint256",
-                "name": "initialValue",
+                "name": "initialPrice",
                 "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "amount",
+                "name": "howMany",
                 "type": "uint256"
             },
             {
@@ -146,12 +132,17 @@
                 "type": "string"
             },
             {
+                "internalType": "string",
+                "name": "file_hash",
+                "type": "string"
+            },
+            {
                 "internalType": "bytes",
                 "name": "data",
                 "type": "bytes"
             }
         ],
-        "name": "registerNFT",
+        "name": "registerToken",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -360,12 +351,17 @@
     {
         "inputs": [
             {
-                "internalType": "string",
-                "name": "newuri",
-                "type": "string"
+                "internalType": "uint256",
+                "name": "ethToRaise",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "timeInSeconds",
+                "type": "uint256"
             }
         ],
-        "name": "setURI",
+        "name": "setCampaignTarget",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -445,8 +441,52 @@
         "type": "event"
     },
     {
-        "inputs": [],
-        "name": "unpause",
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "buyerAddress",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "buyersName",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenPurchased",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "numOfTokens",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pricePaid",
+                "type": "uint256"
+            }
+        ],
+        "name": "updateBuyersList",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "Id",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "count",
+                "type": "uint256"
+            }
+        ],
+        "name": "updateTokenCount",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -469,48 +509,6 @@
         ],
         "name": "URI",
         "type": "event"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": false,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "Unpaused",
-        "type": "event"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "uint256",
-                "name": "",
-                "type": "uint256"
-            }
-        ],
-        "name": "artCollection",
-        "outputs": [
-            {
-                "internalType": "address",
-                "name": "owner",
-                "type": "address"
-            },
-            {
-                "internalType": "uint256",
-                "name": "value",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "amount",
-                "type": "uint256"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
     },
     {
         "inputs": [
@@ -561,6 +559,40 @@
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "name": "buyersList",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "name",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "numberOfTokensToBuy",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "purchasePrice",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "DEFAULT_ADMIN_ROLE",
         "outputs": [
@@ -593,6 +625,38 @@
         "type": "function"
     },
     {
+        "inputs": [],
+        "name": "fundsToRaise",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+            }
+        ],
+        "name": "getIdFromUri",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -606,6 +670,25 @@
                 "internalType": "bytes32",
                 "name": "",
                 "type": "bytes32"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenId",
+                "type": "uint256"
+            }
+        ],
+        "name": "getUri",
+        "outputs": [
+            {
+                "internalType": "string",
+                "name": "",
+                "type": "string"
             }
         ],
         "stateMutability": "view",
@@ -674,12 +757,12 @@
     },
     {
         "inputs": [],
-        "name": "paused",
+        "name": "numberOfTokens",
         "outputs": [
             {
-                "internalType": "bool",
+                "internalType": "uint256",
                 "name": "",
-                "type": "bool"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -687,12 +770,12 @@
     },
     {
         "inputs": [],
-        "name": "PAUSER_ROLE",
+        "name": "rate",
         "outputs": [
             {
-                "internalType": "bytes32",
+                "internalType": "uint256",
                 "name": "",
-                "type": "bytes32"
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -712,6 +795,106 @@
                 "internalType": "bool",
                 "name": "",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "timeTarget",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenBalance",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenCollection",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "owner",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "value",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "string",
+                "name": "uri",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "file_hash",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "availableNow",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "Id",
+                "type": "uint256"
+            }
+        ],
+        "name": "tokenCount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -750,19 +933,6 @@
                 "internalType": "string",
                 "name": "",
                 "type": "string"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function"
-    },
-    {
-        "inputs": [],
-        "name": "URI_SETTER_ROLE",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
             }
         ],
         "stateMutability": "view",
