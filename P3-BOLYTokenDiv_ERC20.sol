@@ -10,17 +10,17 @@ contract BollyToken is Ownable, ReentrancyGuard, ERC20 {
     uint256 constant public MAX_SUPPLY = 100 ether;
     uint32 constant private MULTIPLIER = 1e9;   // in gwei
 
-    /// @notice Eth share of each token in gwei
+    /* Eth share of each token in gwei */
     uint256 dividendPerToken;
     mapping(address => uint256) xDividendPerToken;
 
-    /// @notice Amount that should have been withdrawn
+    /* Amount credited to account address for withdraw*/
     mapping (address => uint256) credit;
 
-    /// @notice State variable representing amount withdrawn by account in ETH
+    /* variable representing amount withdrawn by account in ETH */
     mapping (address => uint256) debt;
 
-    /// @notice If locked is true, users are not allowed to withdraw funds
+    /* If 'locked' is true, users prohibited from withdrawing funds */
     bool public locked;
 
     event FundsReceived(uint256 amount, uint256 dividendPerToken);
@@ -35,10 +35,10 @@ contract BollyToken is Ownable, ReentrancyGuard, ERC20 {
     }
 
     receive() external payable {
-        require(totalSupply() != 0, "No tokens minted");
+        require(totalSupply() != 0, "No BollyTokens minted");
         dividendPerToken += msg.value * MULTIPLIER / totalSupply(); 
 
-        // gwei Multiplier decreases impact of remaining tokens
+        // gwei Multiplier decreases impact of remaining tokens */
         emit FundsReceived(msg.value, dividendPerToken);
     }
 
@@ -55,11 +55,11 @@ contract BollyToken is Ownable, ReentrancyGuard, ERC20 {
         locked = !locked;
     }
 
-    /// @notice Withdraw Eth from contract onto the caller w.r.t balance of token held by caller
-    /// @dev Reentrancy Guard modifier is order to protect the transaction from reentrancy attack
+    /* Withdraw `Eth` from contract onto the caller w.r.t balance of token held by caller */
+    /* Reentrancy Guard modifier from line8 is to protect the transaction from reentrancy attack */
     function withdraw() external nonReentrant isUnlocked {
         uint256 holderBalance = balanceOf(_msgSender());
-        require(holderBalance != 0, "DToken: caller possess no shares");
+        require(holderBalance != 0, "BollyToken: caller possesses no BOLY");
 
         uint256 amount = ( (dividendPerToken - xDividendPerToken[_msgSender()]) * holderBalance / MULTIPLIER);
         amount += credit[_msgSender()];
@@ -67,11 +67,11 @@ contract BollyToken is Ownable, ReentrancyGuard, ERC20 {
         xDividendPerToken[_msgSender()] = dividendPerToken;
 
         (bool success, ) = payable(_msgSender()).call{value: amount}("");
-        require(success, "DToken: Could not withdraw eth");
+        require(success, "BollyToken: Could not withdraw eth");
     }
 
-    /// @notice for extraordinary cases (i.e.lost tokens) leads to unaccessed funds, owner can use this function 
-    /// @dev this function requires trust from the community; hence, requires discussion for agreement 
+    /* for extraordinary cases (i.e.lost tokens) leads to unaccessed funds, owner can use this function
+    // this function requires trust from the community; hence, requires discussion for agreement */
     function emergencyWithdraw() external onlyOwner {
         (bool success, ) = payable(owner()).call{value: address(this).balance}("");
         require(success, "DToken: Could not withdraw eth");
