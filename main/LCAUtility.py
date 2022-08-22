@@ -195,12 +195,10 @@ with tabs[1]:
    
 
 
-        ## Contribute as USD or ETH
-        def collectinfo():
-            with st.form("Collecting User Information", clear_on_submit= True):
-                full_name= st.text_input("Full Name")
-                wallet_address= st.text_input("Ethereum wallet address")
+        ## Contribute as USD or ETH as well as providing token/nft options
+        def providetokenoptions():
                 tokensAvailable = contract.functions.numberOfTokens().call()
+                
                 st.write("Number of tokens available-> "+ str(tokensAvailable))
                 
                 if tokensAvailable > 0:
@@ -222,12 +220,32 @@ with tabs[1]:
                 st.write("token Id=>", tokenId)
                 
                 st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
-
-                ## have 3 possible options  for NFTs
+                
+                
+        def confirmtransaction():
+            contract.functions.updateBuyersList (
+                addr,   # buyer addr
+                name,   # name
+                tokenId,  #token id
+                amt,  # how many he wants
+                tokenPrice  # price paid. at present, taking the same price as offered
+            ).transact({'from': addr, 'gas': 1000000})
+            contract.functions.updateTokenCount(int(tokenId), int(amt)).call()
+            
+        
+        def collectinfo():
+            with st.form("Collecting User Information", clear_on_submit= True):
+                full_name= st.text_input("Full Name")
+                wallet_address= st.text_input("Ethereum wallet address")
+                st.write("Price of this Token is; ", tokenPrice)
+                st.write("Maximum count available for this item: ", availableNow)
+                amt= st.number_input("How many do you want", min_value=1, max_value=int(availableNow))
+                st.write("Your order will be executed upon the closing date of this campaign")
                 cash_amount= st.text_input("USD")
-                submit = st.form_submit_button("submit")
+                submit = st.form_submit_button("submit", on_click=confirmtransaction())
     
         if st.button('Contribute to BGRO'):
+            providetokenoptions()
             collectinfo()
     
     ## Set up image for Movie 2
@@ -245,6 +263,7 @@ with tabs[1]:
 
 ## Contribute as USD or ETH
         if st.button('Contribute to PGRO'):
+            providetokenoptions()
             collectinfo()
         
     ## Set up image for movie 3
@@ -264,51 +283,12 @@ with tabs[1]:
         
         ## Contribute as USD or ETH
         if st.button('Contribute to SJSM'):
+            providetokenoptions()
             collectinfo()
 
         
         
         
-tokensAvailable = contract.functions.numberOfTokens().call()
 
-st.write("Number of tokens available-> "+ str(tokensAvailable))
-
-if tokensAvailable > 0:
-    tokenList = []
-    for item in range (1,tokensAvailable+1):
-        tokenData = contract.functions.tokenCollection(item).call()
-        tokenList.append(tokenData)
-    tokenSelected=st.sidebar.selectbox("Select Option", tokenList)
-    availableNow = tokenSelected[6]
-
-    if tokenSelected and int(availableNow) > 0:
-        st.write("Selected Token Data")
-
-        tokenPrice=tokenSelected[1]
-        maxTokens = tokenSelected[2]
-        tokenId = tokenSelected[5]
-        tokenOwner=tokenSelected[0]
-
-        st.write(tokenSelected[3], tokenSelected[2], tokenSelected[1], tokenSelected[0])
-        st.write("token Id=>", tokenId)
-        st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
-
-    #display tokens and their prices etc
-
-        st.write("Price of this Token is; ", tokenPrice)
-        st.write("Maximum count available for this item: ", availableNow)
-        amt= st.number_input("How many do you want", min_value=1, max_value=int(availableNow))
-        st.write("Your order will be executed upon the closing date of this campaign")
-        name = st.text_input("Your Name Please")
-        addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
-        if  st.button("Confirm to Purchase"):
-            contract.functions.updateBuyersList (
-                addr,   # buyer addr
-                name,   # name
-                tokenId,  #token id
-                amt,  # how many he wants
-                tokenPrice  # price paid. at present, taking the same price as offered
-            ).transact({'from': addr, 'gas': 1000000})
-            contract.functions.updateTokenCount(int(tokenId), int(amt)).call()
 
         
