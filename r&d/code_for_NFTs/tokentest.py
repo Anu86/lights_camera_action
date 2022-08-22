@@ -1,5 +1,6 @@
 import os
 import json
+import token
 from web3 import Web3
 from pathlib import Path
 from dotenv import load_dotenv
@@ -23,7 +24,7 @@ w3 = Web3(Web3.HTTPProvider(os.getenv("WEB3_PROVIDER_URI")))
 def load_contract():
 
     # Load the contract ABI
-    with open(Path('./contracts/compiled/nfts_abi.json')) as f:
+    with open(Path('./contracts/compiled/tokens_abi.json')) as f:
         contract_abi = json.load(f)
 
     # Set the contract address (this is the address of the deployed contract)
@@ -46,13 +47,19 @@ contract = load_contract()
 ################################################################################
 
 
-def pin_artwork(artwork_name, artwork_file):
+def pin_artwork(owner, film, filmItem, price,issueQty,availableNow,commission, artwork_file):
     # Pin the file to IPFS with Pinata
     ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
 
     # Build a token metadata file for the artwork
     token_json = {
-        "name": artwork_name,
+        "owner": owner,    #address of who owns it, initially the film company
+        "film": film,       #film name
+        "filmItem": filmItem, #item of the film that is NFTd
+        "price" : price,    #price for this one
+        "issueQuantity": issueQty, #how many of this nft issued at the beginning
+        "amtAvailableNow": availableNow, # howmany available now
+        "commission": commission,  #seller fee or commission
         "image": ipfs_file_hash
     }
     json_data = convert_data_to_json(token_json)
@@ -68,39 +75,50 @@ st.title("NFT Items Registry System")
 # Here we are asking for a User Account from Ganache to work with
 st.write("Choose an account to get started")
 accounts = w3.eth.accounts
-address = st.selectbox("Select Account", options=accounts)
+owner = st.selectbox("Select Account", options=accounts)
 st.markdown("---")
 ################################################################################
 # Register NFT Item
 ################################################################################
-st.markdown("## Register NFT Item")
-item_from = st.text_input("Enter the name of the Movie/ Web-Series")
-item_name = st.text_input("Enter the name for the Item from this Movie/Series")
-initial_appraisal_value = st.text_input("Enter the Initial Price")
-amount = st.text_input("How many NFT Tokens for this item")  #amt is uint256
-artwork_file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
+#        "owner": owner,    #address of who owns it, initially the film company
+#        "film": film,       #film name
+#        "filmItem": filmItem, #item of the film that is NFTd
+#        "price" : price,    #price for this one
+#        "issueQuantity": issueQty, #how many of this nft issued at the beginning
+#        "amtAvailableNow": availableNow, # howmany available now
+#        "commission": commission,  #seller fee or commission
+################
+name = st.text_input("Name ")
+initial_price = st.number_input("Enter the Initial Price")
+issueQty = st.text_input("How many NFT Tokens for this item")  #amt is uint256
+
 data = 0x0000  #data is bytes data, if any
+availableNow = issueQty
 
-if st.button("Register with IPFS"):
-    # Use the `pin_artwork` helper function to pin the file to IPFS
 
-    artwork_ipfs_hash, file_hash =  pin_artwork(item_name, artwork_file) # @TODO: YOUR CODE HERE!
 
-    artwork_uri = f"ipfs://{artwork_ipfs_hash}"
+tokenPrice= int(initial_price)
+tokenId = 1
 
-    tx_hash = contract.functions.registerNFT(
-        address,
-        int(initial_appraisal_value),
-        int(amount),
-        artwork_uri,
-        bytes(0x0000)
-    ).transact({'from': address, 'gas': 1000000})
-    receipt = w3.eth.waitForTransactionReceipt(tx_hash)
-    #st.write("Transaction receipt mined:")
-   # st.write(dict(receipt))
-   # st.write("You can view the pinned metadata file with the following IPFS Gateway Link")
-    #st.markdown(f"[Artwork IPFS Gateway Link](https://ipfs.io/ipfs/{artwork_ipfs_hash})")
-    st.markdown(f"[Click to see the NFT just added](https://gateway.pinata.cloud/ipfs/{file_hash})")
-    st.write(file_hash)
-st.markdown("---")
+
+    #display tokens and their prices etc
+
+st.write("Price of this Token is; ", tokenPrice)
+st.write("Maximum count available for this item: ", availableNow)
+amt= st.number_input("How many do you want", min_value=1, max_value=int(availableNow))
+addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
+st.button("Confirm to Purchase")
+
+#contract.functions.updateBuyersList (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': addr})
+
+contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
+
+    
+
+
+
+
+
+# Now setting a sidebar menu
+
 

@@ -126,12 +126,29 @@ if st.button("Register with IPFS"):
     #st.markdown(f"[Artwork IPFS Gateway Link](https://ipfs.io/ipfs/{artwork_ipfs_hash})")
     st.markdown(f"[Click to see the NFT just added](https://gateway.pinata.cloud/ipfs/{file_hash})")
     st.write(file_hash)
-st.markdown("---")
 
 # DISPLAY AVAILABLE TOKENS
 tokensAvailable = contract.functions.numberOfTokens().call()
 
 st.write("Number of tokens available-> "+ str(tokensAvailable))
+st.write ("TYPE of OWNER is ==>> ", type(owner))
+
+# SET THE TARGETS
+
+fundsTarget = st.number_input("Target Amount to Raise")
+timeLimit =  st.number_input("How long for the Campaign, enter in SECONDS..(sorry!)")
+st.button("SetTargets")
+
+
+contract.functions.setCampaignTarget(int(fundsTarget), int(timeLimit)).transact({'from': owner, 'gas': 1000000})
+
+
+# RETRIEVE THE TARGETS
+fundsToRaise = contract.functions.fundsToRaise().call()
+timeTarget = contract.functions.timeTarget().call()
+
+st.write("FUNDSTORAISE-> ", fundsToRaise)
+st.write("TIMETARGET-> ", timeTarget)
 
 if tokensAvailable > 0:
     tokenList = []
@@ -149,7 +166,7 @@ if tokensAvailable > 0:
         tokenId = tokenSelected[10]
         tokenOwner=tokenSelected[0]
 
-        st.write("token Id=>", tokenId)
+        st.write("token Id=>", type(tokenId), type(tokenPrice), tokenId)
         st.write(tokenOwner, maxTokens, tokenPrice, availableNow)
 
         st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
@@ -162,15 +179,11 @@ if tokensAvailable > 0:
         st.write("Your order will be executed upon the closing date of this campaign")
         name = st.text_input("Your Name Please")
         addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
-        if  st.button("Confirm to Purchase"):
-            contract.functions.updateBuyersList (
-                addr,   # buyer addr
-                name,   # name
-                tokenId,  #token id
-                amt,  # how many he wants
-                tokenPrice  # price paid. at present, taking the same price as offered
-            ).transact({'from': addr, 'gas': 1000000})
-            contract.functions.updateTokenCount(int(tokenId), int(amt)).call()
+        st.button("Confirm to Purchase")
+
+        contract.functions.updateBuyersList (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': addr})
+
+        contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
 
     
 
