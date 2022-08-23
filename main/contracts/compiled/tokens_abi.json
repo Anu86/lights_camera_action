@@ -117,6 +117,16 @@
                 "type": "address"
             },
             {
+                "internalType": "string",
+                "name": "film",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "filmItem",
+                "type": "string"
+            },
+            {
                 "internalType": "uint256",
                 "name": "initialPrice",
                 "type": "uint256"
@@ -124,6 +134,16 @@
             {
                 "internalType": "uint256",
                 "name": "howMany",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "availNow",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "commission",
                 "type": "uint256"
             },
             {
@@ -848,6 +868,16 @@
                 "type": "address"
             },
             {
+                "internalType": "string",
+                "name": "film",
+                "type": "string"
+            },
+            {
+                "internalType": "string",
+                "name": "filmItem",
+                "type": "string"
+            },
+            {
                 "internalType": "uint256",
                 "name": "value",
                 "type": "uint256"
@@ -855,6 +885,16 @@
             {
                 "internalType": "uint256",
                 "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "availableNow",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "commission",
                 "type": "uint256"
             },
             {
@@ -868,13 +908,13 @@
                 "type": "string"
             },
             {
-                "internalType": "uint256",
-                "name": "tokenid",
-                "type": "uint256"
+                "internalType": "bytes",
+                "name": "data",
+                "type": "bytes"
             },
             {
                 "internalType": "uint256",
-                "name": "availableNow",
+                "name": "tokenid",
                 "type": "uint256"
             }
         ],
