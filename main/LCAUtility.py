@@ -12,8 +12,7 @@ import os
 import json
 import token
 
-############Streamlit Code #########################
-
+############Streamlit Code ##################################################
 
 
 load_dotenv('my.env')
@@ -75,9 +74,9 @@ set_png_as_page_bg('films_4.png')
 # Load the contract
 contract = load_contract()
 
-## Set up the title in black
+## Set up the title 
 st.markdown(f'<h1 style="color:#FF5733;font-size:40px;">{"Lights Camera Action"}</h1>', unsafe_allow_html=True)
-    ## Set up the subtitle in black
+    ## Set up the subtitle 
 st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"Movie funding made easy!"}</h2>', unsafe_allow_html=True)
 
 #######################################################################################
@@ -87,21 +86,27 @@ st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"Movie funding made eas
 tabs = st.tabs(["Register NFT","Make Investment"])
 
 with tabs[0]:
-    st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"LCA Possible Invesmtments"}</h2>', unsafe_allow_html=True)
+    st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"NFT Registration"}</h2>', unsafe_allow_html=True)
     ################################################################################
     # Helper functions to pin files and json to Pinata
     ################################################################################
 
 
-    def pin_artwork(artwork_name, artwork_file):
+    def pin_artwork(owner,film,filmItem,price,issueQty,availableNow,commission, artwork_file):
         # Pin the file to IPFS with Pinata
         ipfs_file_hash = pin_file_to_ipfs(artwork_file.getvalue())
 
         # Build a token metadata file for the artwork
         token_json = {
-            "name": artwork_name,
+            "owner": owner,    #address of who owns it, initially the film company
+            "film": film,       #film name
+            "filmItem": filmItem, #item of the film that is NFTd
+            "price" : price,    #price for this one
+            "issueQuantity": issueQty, #how many of this nft issued at the beginning
+            "amtAvailableNow": availableNow, # howmany available now
+            "commission": commission,  #seller fee or commission
             "image": ipfs_file_hash
-        }
+            }
         json_data = convert_data_to_json(token_json)
 
         # Pin the json to IPFS with Pinata
@@ -118,29 +123,43 @@ with tabs[0]:
     ################################################################################
     # Register NFT Item
     ################################################################################
-    st.markdown("## Register NFT Item")
-    item_from = st.text_input("Enter the name of the Movie/ Web-Series")
-    item_name = st.text_input("Enter the name for the Item from this Movie/Series")
+    st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"Register NFT Item"}</h2>', unsafe_allow_html=True)
+    film = st.text_input("Enter the name of the Movie/ Web-Series")
+    film_item = st.text_input("Enter the name for the Item from this Movie/Series")
     initial_price = st.text_input("Enter the Initial Price")
-    amount = st.text_input("How many NFT Tokens for this item")  #amt is uint256
+    issueQty = st.text_input("How many NFT Tokens for this item")  #amt is uint256
+    commission = st.number_input("Commission in percent- Enter 5 for 5 percent ")
+    
     artwork_file = st.file_uploader("Upload Artwork", type=["jpg", "jpeg", "png"])
+    
     data = 0x0000  #data is bytes data, if any
+    
+    availableNow = issueQty
 
     if st.button("Register with IPFS"):
     # Use the `pin_artwork` helper function to pin the file to IPFS
 
-        artwork_ipfs_hash, file_hash =  pin_artwork(item_name, artwork_file) # @TODO: YOUR CODE HERE!
+        artwork_ipfs_hash, file_hash =  pin_artwork(owner,
+                                                    film,filmItem,
+                                                    initial_price,
+                                                    issueQty,availableNow,
+                                                    commission, artwork_file) 
+        
 
         artwork_uri = f"ipfs://{artwork_ipfs_hash}"
 
         tx_hash = contract.functions.registerToken(
-            address,
+            owner,
+            film,
+            filmItem,
             int(initial_price),
-            int(amount),
+            int(issueQty),
+            int(availableNow),
+            int(commission*100),  # commission multiplied by hundred bec of Solidity 
             artwork_uri,
             file_hash,
             bytes(0x0000)
-            ).transact({'from': address, 'gas': 1000000})
+            ).transact({'from': owner, 'gas': 1000000})
         receipt = w3.eth.waitForTransactionReceipt(tx_hash)
     #st.write("Transaction receipt mined:")
     # st.write(dict(receipt))
@@ -149,6 +168,24 @@ with tabs[0]:
         st.markdown(f"[Click to see the NFT just added](https://gateway.pinata.cloud/ipfs/{file_hash})")
         st.write(file_hash)
         st.markdown("---")
+        
+    st.markdown(f'<h2 style="color:#F78066;font-size:24px;">{"Campaign Setup for Film Funding"}</h2>',unsafe_allow_html=True)
+    fundsTarget = st.number_input("Target Amount to Raise")
+    timeLimit =  st.number_input("How long for the Campaign, enter in SECONDS..(sorry!)")
+    st.button("SetTargets")
+
+
+    contract.functions.setCampaignTarget(int(fundsTarget), int(timeLimit)).transact({'from': owner, 'gas': 1000000})
+
+
+    # RETRIEVE THE TARGETS
+    fundsToRaise = contract.functions.fundsToRaise().call()
+    timeTarget = contract.functions.timeTarget().call()
+
+    st.write("FUNDSTORAISE-> ", fundsToRaise)
+    st.write("TIMETARGET-> ", timeTarget)        
+        
+    st.markdown("---")
     
 #########################################################################################################
 #########################################################################################################
@@ -197,41 +234,34 @@ with tabs[1]:
 
         ## Contribute as USD or ETH as well as providing token/nft options
         def providetokenoptions():
-                tokensAvailable = contract.functions.numberOfTokens().call()
-                
-                st.write("Number of tokens available-> "+ str(tokensAvailable))
-                
-                if tokensAvailable > 0:
-                    tokenList = []
-                    for item in range (1,tokensAvailable+1):
-                        tokenData = contract.functions.tokenCollection(item).call()
-                        tokenList.append(tokenData)
+            st.write("Price of this Token is; ", tokenPrice)
+            st.write("Maximum count available for this item: ", availableNow)
+            
+            if tokensAvailable > 0:
+                tokenList = []
+                for item in range (1,tokensAvailable+1):
+                    tokenData = contract.functions.tokenCollection(item).call()
+                    tokenList.append(tokenData)
                     tokenSelected=st.sidebar.selectbox("Select Option", tokenList)
-                    availableNow = tokenSelected[6]
+                    availableNow = tokenSelected[5]
 
                 if tokenSelected and int(availableNow) > 0:
                     st.write("Selected Token Data")
-                    tokenPrice=tokenSelected[1]
-                    maxTokens = tokenSelected[2]
-                    tokenId = tokenSelected[5]
+                    tokenPrice=tokenSelected[3]
+                    maxTokens = tokenSelected[4]
+                    tokenId = tokenSelected[10]
                     tokenOwner=tokenSelected[0]
                     
-                st.write(tokenSelected[3], tokenSelected[2], tokenSelected[1], tokenSelected[0])
-                st.write("token Id=>", tokenId)
+                    st.write("token Id=>", type(tokenId), type(tokenPrice), tokenId)
+                    st.write(tokenOwner, maxTokens, tokenPrice, availableNow)
                 
-                st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
+                    st.markdown(f"[Click to see the Token you selected](https://gateway.pinata.cloud/ipfs/{tokenSelected[4]})")
                 
                 
         def confirmtransaction():
-            contract.functions.updateBuyersList (
-                addr,   # buyer addr
-                name,   # name
-                tokenId,  #token id
-                amt,  # how many he wants
-                tokenPrice  # price paid. at present, taking the same price as offered
-            ).transact({'from': addr, 'gas': 1000000})
-            contract.functions.updateTokenCount(int(tokenId), int(amt)).call()
-            
+            contract.functions.updateBuyersList(addr,name,tokenId,
+                                                int(amt),tokenPrice).transact({'from': addr})
+            contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
         
         def collectinfo():
             with st.form("Collecting User Information", clear_on_submit= True):
