@@ -108,7 +108,7 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
             refundForTokens (
                 buyersList[buyerAddress[i]].tokenId,
                 buyersList[buyerAddress[i]].numberOfTokensToBuy,
-                buyersList[buyerAddress[i]].purchasePrice, 
+                buyersList[buyerAddress[i]].pricePaid, 
                 buyersList[buyerAddress[i]].addrOfBuyer);
         }
     }
@@ -293,7 +293,7 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
 
 // while refunding the Company is executing this code so msg.sender would be company and the account will be theirs to send from
 // so recipient is the investor
-    function refundForTokens(uint256 tokenid, uint256 count,  uint256 amount, address payable recipient) public payable {
+    function refundForTokens(uint256 tokenid, uint256 count, address payable recipient, uint256 amount) public payable {
         recipient.transfer(amount);
         fundsRaised -= amount;
         updateRefundTokenCount(tokenid, count);
