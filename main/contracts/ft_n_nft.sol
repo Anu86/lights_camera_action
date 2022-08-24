@@ -1,4 +1,4 @@
-/ SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts@4.7.3/token/ERC1155/ERC1155.sol";
@@ -21,13 +21,16 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
 // NftMetaData for NFT assigned to n investor
     struct tokenInfo {
         address owner; //who owns it
+        string film;
+        string filmItem;
         uint256 value;  //price for this one
         uint256 amount; //how many of this nft
+        uint256 availableNow;
+        uint256 commission;
         string uri;  //uri of the. token
         string file_hash; // for Streamlit Ease
+        bytes data;
         uint256 tokenid; //for Streamlit ease
-        uint256 availableNow; // howmany available now
-
     }
 
     //Map token id to TokenInfo
@@ -54,10 +57,10 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
     mapping (address => buyer) public buyersList;
 
     function updateBuyersList( 
-                    address buyerAddress,
-                    string memory buyersName,
-                    uint256 tokenPurchased,
-                    uint256 numOfTokens,
+                    address buyerAddress,  // buyers wallet addr
+                    string memory buyersName,  // buyers name.. oops!
+                    uint256 tokenPurchased,  // which token or NFT
+                    uint256 numOfTokens,  // how many of those tokens, 1 for NFT - obviously!
                     uint256 pricePaid
                     ) public {
         buyersList[buyerAddress] = buyer(buyersName,
@@ -106,19 +109,19 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
     {
         return super.supportsInterface(interfaceId);
     }
-
-
-
+        
     function registerToken(
-        address owner,  //who owns
-        // the below two items not needed as we r handling it in the streamlit interface
-        //string memory filmName, //film name 
-       // string memory nftItem,  //nftitem name
-        uint256 initialPrice, //price
-        uint256 howMany,  //how many
-        string memory nftURI,  //uri of the nft
-        string memory file_hash, // hash of nft on ipfs
-        bytes memory data //associated data if any. 0x0000 if not
+        address owner,   //who owns
+        string memory film,  // which film
+        string memory filmItem,  // which item of the film
+        uint256 initialPrice, // initial price or issue price
+        uint256 howMany,  // initial or issue qty
+        uint256 availNow,  // how much available now
+        uint256 commission, // sellers commission in percent, 5 for 5 percent
+        string memory nftURI, // IPFS uri
+        string memory file_hash, // IPFS file hash for eas of access
+        bytes memory data // any other data, if
+        
     ) public returns (uint256) {
         //uint256 tokenId;
 
@@ -126,10 +129,12 @@ contract Bolly_ft_and_nft is ERC1155, AccessControl, ERC1155Supply {
 
          _mint(owner, tokenId, howMany, data);
          //_setURI(nftURI);
-        // added file_has for ease of display in Streamlit-IPFS, 
+        // added file_hash for ease of display in Streamlit-IPFS, 
         // added tokenId on RHS, though not needed here, but eases work from Streamlit for updating
         // count of tokens/tokenId
-        tokenCollection[tokenId] = tokenInfo(owner, initialPrice, howMany, nftURI, file_hash, tokenId, howMany);
+
+
+        tokenCollection[tokenId] = tokenInfo(owner, film, filmItem, initialPrice, howMany, availNow, commission, nftURI, file_hash, data, tokenId);
         tokenBalance[tokenId] = howMany; //initialize the totalcount of this token
         _uris[tokenId] = nftURI;  // uri of the token  mapped to tokenID
         _idOfUris[nftURI] = tokenId;  // tokenId mapped to Uri
