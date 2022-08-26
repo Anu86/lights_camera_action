@@ -109,9 +109,9 @@ amt= st.number_input("How many do you want", min_value=1, max_value=int(availabl
 addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
 st.button("Confirm to Purchase")
 
-contract.functions.updateBuyersList (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': addr})
+contract.functions.buyersListMintAndPay (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': owner, 'gas': 1000000})
 
-contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
+#contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
 
     
 

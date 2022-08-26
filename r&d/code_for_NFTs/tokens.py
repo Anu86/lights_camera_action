@@ -136,11 +136,12 @@ st.write ("TYPE of OWNER is ==>> ", type(owner))
 # SET THE TARGETS
 
 fundsTarget = st.number_input("Target Amount to Raise")
+timeBegin = st.number_input("Time Begin Campaign, enter in SECONDS since Jan 1 1970, UNIX Time ")
 timeLimit =  st.number_input("How long for the Campaign, enter in SECONDS..(sorry!)")
 st.button("SetTargets")
 
 
-contract.functions.setCampaignTarget(int(fundsTarget), int(timeLimit)).transact({'from': owner, 'gas': 1000000})
+contract.functions.setCampaignTarget(int(fundsTarget), int(timeBegin), int(timeLimit)).transact({'from': owner, 'gas': 1000000})
 
 
 # RETRIEVE THE TARGETS
@@ -181,9 +182,9 @@ if tokensAvailable > 0:
         addr=st.text_input("Enter your Wallet Address for ETH withdrawl")
         st.button("Confirm to Purchase")
 
-        contract.functions.updateBuyersList (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': addr})
+        contract.functions.buyersListMintAndPay (addr,name,tokenId,  int(amt), tokenPrice).transact({'from': addr})
 
-        contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
+       # contract.functions.updateTokenCount(int(tokenId), int(amt)).transact({'from': addr})
 
     
 

@@ -36,6 +36,65 @@
         "type": "event"
     },
     {
+        "inputs": [],
+        "name": "balanceTime",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "buyerAddr",
+                "type": "address"
+            },
+            {
+                "internalType": "string",
+                "name": "buyersName",
+                "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "tokenPurchased",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "numOfTokens",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "pricePaid",
+                "type": "uint256"
+            }
+        ],
+        "name": "buyersListMintAndPay",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "newTime",
+                "type": "uint256"
+            }
+        ],
+        "name": "extendTime",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [
             {
                 "internalType": "bytes32",
@@ -112,7 +171,60 @@
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
                 "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            }
+        ],
+        "name": "payForTokens",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "refund_buyers",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenid",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "count",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
+            },
+            {
+                "internalType": "address",
+                "name": "recipient",
+                "type": "address"
+            }
+        ],
+        "name": "refundForTokens",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address payable",
                 "name": "owner",
                 "type": "address"
             },
@@ -187,6 +299,13 @@
             }
         ],
         "name": "renounceRole",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "reset_buyerlist",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -377,6 +496,11 @@
             },
             {
                 "internalType": "uint256",
+                "name": "timeBegin",
+                "type": "uint256"
+            },
+            {
+                "internalType": "uint256",
                 "name": "timeInSeconds",
                 "type": "uint256"
             }
@@ -463,32 +587,17 @@
     {
         "inputs": [
             {
-                "internalType": "address",
-                "name": "buyerAddress",
-                "type": "address"
-            },
-            {
-                "internalType": "string",
-                "name": "buyersName",
-                "type": "string"
-            },
-            {
                 "internalType": "uint256",
-                "name": "tokenPurchased",
+                "name": "Id",
                 "type": "uint256"
             },
             {
                 "internalType": "uint256",
-                "name": "numOfTokens",
-                "type": "uint256"
-            },
-            {
-                "internalType": "uint256",
-                "name": "pricePaid",
+                "name": "count",
                 "type": "uint256"
             }
         ],
-        "name": "updateBuyersList",
+        "name": "updateRefundTokenCount",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
@@ -581,6 +690,25 @@
     {
         "inputs": [
             {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "name": "buyerAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
                 "internalType": "address",
                 "name": "",
                 "type": "address"
@@ -588,6 +716,11 @@
         ],
         "name": "buyersList",
         "outputs": [
+            {
+                "internalType": "address",
+                "name": "addrOfBuyer",
+                "type": "address"
+            },
             {
                 "internalType": "string",
                 "name": "name",
@@ -639,6 +772,19 @@
                 "internalType": "bool",
                 "name": "",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "fundsRaisedSoFar",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -777,6 +923,19 @@
     },
     {
         "inputs": [],
+        "name": "msgsender",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "numberOfTokens",
         "outputs": [
             {
@@ -790,7 +949,33 @@
     },
     {
         "inputs": [],
+        "name": "ownerAddress",
+        "outputs": [
+            {
+                "internalType": "address",
+                "name": "",
+                "type": "address"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
         "name": "rate",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "startTime",
         "outputs": [
             {
                 "internalType": "uint256",
@@ -863,7 +1048,7 @@
         "name": "tokenCollection",
         "outputs": [
             {
-                "internalType": "address",
+                "internalType": "address payable",
                 "name": "owner",
                 "type": "address"
             },
